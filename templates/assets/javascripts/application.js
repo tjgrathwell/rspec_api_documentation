@@ -51,7 +51,6 @@ function Wurl(wurlForm) {
   this.$wurlForm = $(wurlForm);
   var self = this;
 
-  this.requestBodyMirror = mirror(this.$wurlForm.find('.post_body textarea')[0], $('.request.content_type', this.$wurlForm).val(), {})
   this.responseBodyMirror = mirror(this.$wurlForm.find('.response.body textarea')[0], $('.response.content_type', this.$wurlForm).val(), { "readOnly": true, "lineNumbers":true});
 
   $('.give_it_a_wurl', this.$wurlForm).click(function (event) {
@@ -179,12 +178,40 @@ function Wurl(wurlForm) {
   this.getData = function () {
     var method = $('#wurl_request_method', self.$wurlForm).val();
     if ($.inArray(method, ["PUT", "POST", "DELETE"]) > -1) {
-      self.requestBodyMirror.save();
-      return self.requestBodyMirror.getValue();
+      var $fields = $("input[name*=post_body_values]");
+      var processedFields = _.map($fields, function(el) {
+          return { parent: $(el).data('parent'), key: $(el).data("key"), value: $(el).val() };
+      });
+
+      var parents = _.uniq(_.pluck(processedFields, 'parent'));
+      var requestBody = {};
+      _.each(parents, function(parent) {
+        requestBody[parent] = {};
+        _.each(processedFields, function(field) {
+            var key = field.key;
+            var value = field.value;
+            requestBody[parent][key] = value;
+        });
+      });
+      var mode = $("input.key[value='Content-Type']").siblings("input.value").val();
+      var requestBodyString = mode == "application/json" ?
+          JSON.stringify(requestBody) :
+          this.urlStringify(requestBody);
+      return requestBodyString;
     } else {
       return self.queryParams();
     }
   };
+
+  this.urlStringify = function(hash) {
+      var params = [];
+      _.each(hash, function(parentValue, parentKey) {
+          _.each(parentValue, function(childValue, childKey) {
+              params.push(parentKey + "[" + childKey + "]=" + childValue);
+          });
+      });
+      return params.join("&")
+  }
 
   this.url = function () {
     var url = $('#wurl_request_url', self.$wurlForm).val();

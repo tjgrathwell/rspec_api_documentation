@@ -8,6 +8,7 @@
   <script src="{{url_prefix}}/assets/javascripts/jquery-1-7-2.js"></script>
   <script src="{{url_prefix}}/assets/javascripts/jquery-livequery.js"></script>
   <script src="{{url_prefix}}/assets/javascripts/jquery-base64.js"></script>
+  <script src="{{url_prefix}}/assets/javascripts/underscore.js"></script>
   <script src="{{url_prefix}}/assets/javascripts/jquery-ui-1-8-16-min.js"></script>
   <script src="{{url_prefix}}/assets/javascripts/codemirror.js"></script>
   <script src="{{url_prefix}}/assets/javascripts/mode/css/css.js"></script>
@@ -85,9 +86,19 @@
     {{/ request_query_parameters_text }}
 
     {{# request_body }}
-    <h4>Body</h4>
-
-    <div class="request body"><textarea>{{ request_body }}</textarea></div>
+      {{# request_body_parameters_hash }}
+      <h4>Body</h4>
+      <div class="request_body_parameters well">
+      <span class="scope">Scope: {{ key }}</span>
+      {{# value }}
+      <div class="post_body_pair">
+          <input disabled=disabled class="key" id="post_body_keys_" name="post_body_keys[{{ key }}][{{ k }}]" type="text" value="{{ k }}">
+          <input disabled=disabled class="value" id="post_body_values_" name="post_body_values[{{ key }}][{{ k }}]" data-parent="{{ key}}" data-key="{{ k }}" type="text"
+                 value="{{ v }}">
+      </div>
+      {{/ value }}
+      </div>
+      {{/ request_body_parameters_hash }}
     {{/ request_body }}
 
     {{# curl }}
@@ -108,30 +119,11 @@
           </label>
 
           <div class="controls url">
-            <select id="wurl_request_method" name="wurl[request_method]">
-              <option value="{{ request_method }}" selected="true">{{ request_method }}</option>
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-              <option value="DELETE">DELETE</option>
-              <option value="HEAD">HEAD</option>
-            </select>
+            <input disabled=disabled type="text" id="wurl_request_method" name="wurl[request_method]" value="{{ request_method }}">
             <input id="wurl_request_url" name="wurl[request_url]" value="{{ request_path_no_query }}">
           </div>
         </div>
-        <div class="control-group">
-          <label class="control-label">
-            Basic Auth
-          </label>
 
-          <div class="controls">
-            <div class="field_pair">
-              <input id="wurl_basic_auth_user" name="wurl[basic_auth_user]" placeholder="username">
-              <input id="wurl_basic_auth_password" name="wurl[basic_auth_password]"
-                     placeholder="password">
-            </div>
-          </div>
-        </div>
         <div class="control-group">
           <label class="control-label with-button">
             <a class="btn trash_headers btn-small btn-danger" title="trash all headers"><i
@@ -156,7 +148,7 @@
             {{# request_headers_hash }}
             <div class="header_pair">
               <input class="key ui-autocomplete-input" id="header_keys_" name="header_keys[]"
-                     type="text"
+                     type="text" disabled="disabled"
                      autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"
                      value="{{ name }}">
               <input class="value" id="header_values_" name="header_values[]" type="text"
@@ -188,15 +180,13 @@
             {{# request_query_parameters_hash }}
 
             <div class="param_pair">
-              <input class="key" id="param_keys_" name="param_keys[]" type="text" value="{{ name }}">
+              <input disabled=disabled class="key" id="param_keys_" name="param_keys[]" type="text" value="{{ name }}">
               <input class="value" id="param_values_" name="param_values[]" type="text"
                      value="{{ value }}">
               <a class="btn delete_param btn-small btn-danger" title="delete parameter"><i
                   class="icon-remove icon-white"></i></a>
             </div>
             {{/ request_query_parameters_hash }}
-
-
           </div>
         </div>
         <div class="control-group">
@@ -204,10 +194,21 @@
             <span>Body</span>
           </label>
 
-          <div class="post_body controls">
+          <div class="post_body controls request_body_parameters">
             <textarea id="wurl_request_body" name="wurl[request_body]" rows="5"
-                      disabled="disabled"
-                      class="textarea_disabled">{{ request_body }}</textarea>
+                    disabled="disabled" class="textarea_disabled" style="display:none;">
+                {{ request_body }}
+            </textarea>
+            {{# request_body_parameters_hash }}
+              <span class="scope">Scope: {{ key }}</span>
+              {{# value }}
+                <div class="post_body_pair">
+                  <input disabled=disabled class="key" id="post_body_keys_" name="post_body_keys[{{ key }}][{{ k }}]" type="text" value="{{ k }}">
+                  <input class="value" id="post_body_values_" name="post_body_values[{{ key }}][{{ k }}]" data-parent="{{ key}}" data-key="{{ k }}" type="text"
+                         value="{{ v }}">
+                </div>
+              {{/ value }}
+            {{/ request_body_parameters_hash }}
           </div>
         </div>
         <div class="control-group">

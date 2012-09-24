@@ -6,6 +6,12 @@ body {
     width: 432px;
 }
 
+.request_body_parameters span.scope {
+    text-transform: capitalize;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
 .CodeMirror {
     font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
     font-size: 12px;

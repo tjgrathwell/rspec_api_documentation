@@ -1,4 +1,6 @@
 require 'mustache'
+require 'JSON'
+require 'cgi'
 
 module RspecApiDocumentation
   class WurlWriter
@@ -83,6 +85,11 @@ module RspecApiDocumentation
         hash[:request_path_no_query] = hash[:request_path].split('?').first
         hash[:request_query_parameters_text] = format_hash(hash[:request_query_parameters])
         hash[:request_query_parameters_hash] = hash[:request_query_parameters].collect { |k, v| {:name => k, :value => v} } if hash[:request_query_parameters].present?
+
+        if hash[:request_body].present?
+          hash[:request_body_parameters_hash] = transform_request_body_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
+        end
+
         hash[:response_headers_text] = format_hash(hash[:response_headers])
         hash[:response_status] = hash[:response_status].to_s + " " + Rack::Utils::HTTP_STATUS_CODES[hash[:response_status]].to_s
         if @host
@@ -92,6 +99,36 @@ module RspecApiDocumentation
         end
         hash
       end
+    end
+
+    def transform_request_body_parameters(request_body_string, request_content_type)
+      request_body = if request_content_type == "application/json"
+        JSON.parse(request_body_string)
+      else
+        parse_url_query_params(request_body_string)
+      end
+
+      request_body.map do | key, value |
+        {
+          key: key,
+          value: value.map do | k, v |
+            { k: k, v: v }
+          end
+        }
+      end
+    end
+
+    def parse_url_query_params(url_params_string)
+      flat = CGI.parse(url_params_string)
+      nested = {}
+      flat.each do |key, value|
+        parts = key.split(/(\[|\])/)
+        root_element = parts[0]
+        child_element = parts[2]
+        nested[root_element] ||= {}
+        nested[root_element][child_element] = value.first
+      end
+      nested
     end
 
     def url_prefix

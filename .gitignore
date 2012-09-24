@@ -3,3 +3,7 @@ tmp
 example/docs
 example/public/docs
 *.gem
+
+Gemfile.lock
+.idea/
+.rbenv-version

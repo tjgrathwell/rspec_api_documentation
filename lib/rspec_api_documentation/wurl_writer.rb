@@ -1,5 +1,5 @@
 require 'mustache'
-require 'JSON'
+require 'json'
 require 'cgi'
 
 module RspecApiDocumentation

@@ -86,22 +86,9 @@
     {{/ request_query_parameters_text }}
 
     {{# request_body }}
-    {{# request_body_parameters_hash }}
     <h4>Body</h4>
 
-    <div class="request_body_parameters well">
-        <span class="scope">Scope: {{ key }}</span>
-        {{# value }}
-        <div class="post_body_pair">
-            <input disabled=disabled class="key" id="post_body_keys_" name="post_body_keys[{{ key }}][{{ k }}]"
-                   type="text" value="{{ k }}">
-            <input disabled=disabled class="value" id="post_body_values_" name="post_body_values[{{ key }}][{{ k }}]"
-                   data-parent="{{ key}}" data-key="{{ k }}" type="text"
-                   value="{{ v }}">
-        </div>
-        {{/ value }}
-    </div>
-    {{/ request_body_parameters_hash }}
+    <div class="request body"><textarea>{{ request_body }}</textarea></div>
     {{/ request_body }}
 
     {{# curl }}

@@ -57,6 +57,7 @@ function Wurl(wurlForm) {
     event.preventDefault();
     self.sendWurl();
   });
+
   $('.add_header', this.$wurlForm).click(function () {
     self.addInputs('header');
   });
@@ -95,6 +96,10 @@ function Wurl(wurlForm) {
 
   $('.url select', this.$wurlForm).change(function () {
     self.updateBodyInput();
+  });
+
+  $('.url input.url_param', this.$wurlForm).keyup(function () {
+    self.updateUrl();
   });
 
   $(".header_pair input.key", this.$wurlForm).livequery(function () {
@@ -154,6 +159,17 @@ function Wurl(wurlForm) {
     }
   };
   this.updateBodyInput();
+
+  this.updateUrl = function() {
+      var url = this.url();
+      var params = _.each($("input.url_param", self.$wurlForm), function(el) {
+          var key = $(el).data('key');
+          var value = $(el).val();
+          var regexp = new RegExp(key + "\/[\\d]+")
+          url = url.replace(regexp, key + "/" + value);
+      });
+      $('input#wurl_request_url', self.$wurlForm).val(url);
+  };
 
   this.makeBasicAuth = function () {
     var user = $('#wurl_basic_auth_user', this.$wurlForm).val();

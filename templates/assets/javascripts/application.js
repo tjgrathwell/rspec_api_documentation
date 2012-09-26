@@ -165,8 +165,10 @@ function Wurl(wurlForm) {
       var params = _.each($("input.url_param", self.$wurlForm), function(el) {
           var key = $(el).data('key');
           var value = $(el).val();
-          var regexp = new RegExp(key + "\/[\\d]+")
-          url = url.replace(regexp, key + "/" + value);
+          if(value.match(/^[\d]+$/)) {
+            var regexp = new RegExp(key + "\/[\\d]+");
+            url = url.replace(regexp, key + "/" + value);
+          }
       });
       $('input#wurl_request_url', self.$wurlForm).val(url);
   };

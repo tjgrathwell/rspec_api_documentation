@@ -138,17 +138,7 @@ module RspecApiDocumentation
       end
 
       request_body.map do | key, value |
-        if !value.respond_to? :map
-          { key: key, value: value }
-        else
-          required_values = value.map do | k, v |
-            { k: k, v: v }
-          end
-          {
-            key: key,
-            value: required_values
-          }
-        end
+        { key: key, value: value }
       end
     end
 

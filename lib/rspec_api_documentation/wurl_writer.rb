@@ -163,11 +163,7 @@ module RspecApiDocumentation
       flat = CGI.parse(url_params_string)
       nested = {}
       flat.each do |key, value|
-        parts = key.split(/(\[|\])/)
-        root_element = parts[0]
-        child_element = parts[2]
-        nested[root_element] ||= {}
-        nested[root_element][child_element] = value.first
+        nested[key] = value.first
       end
       nested
     end

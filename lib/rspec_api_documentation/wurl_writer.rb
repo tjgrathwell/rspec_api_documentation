@@ -55,6 +55,8 @@ module RspecApiDocumentation
   end
 
   class WurlExample < Mustache
+    attr_accessor :example
+
     def initialize(example, configuration)
       @example = example
       @host = configuration.curl_host
@@ -86,9 +88,7 @@ module RspecApiDocumentation
         hash[:request_query_parameters_text] = format_hash(hash[:request_query_parameters])
         hash[:request_query_parameters_hash] = hash[:request_query_parameters].collect { |k, v| {:name => k, :value => v} } if hash[:request_query_parameters].present?
 
-        if hash[:request_body].present?
-          hash[:request_body_parameters_hash] = transform_request_body_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
-        end
+        hash[:request_body_parameters_hash] = transform_request_body_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
 
         hash[:request_url_parameters_hash] = transform_request_url_parameters(hash[:request_path_no_query])
 
@@ -104,21 +104,61 @@ module RspecApiDocumentation
     end
 
     def transform_request_body_parameters(request_body_string, request_content_type)
-      request_body = if request_content_type == "application/json"
-        JSON.parse(request_body_string)
-      else
-        parse_url_query_params(request_body_string)
+      begin
+        request_body = if request_content_type == "application/json"
+                         JSON.parse(request_body_string)
+                       else
+                         parse_url_query_params(request_body_string)
+                       end
+      rescue Exception => e
+        request_body = {}
+      end
+
+      if @example.metadata && @example.metadata[:parameters]
+        @example.metadata[:parameters].each do |parameter|
+          name = parameter[:name]
+          if parameter[:scope]
+            scope = parameter[:scope].to_s
+          else
+            scope = ''
+          end
+
+          unless contains_scoped_parameter(request_body, parameter)
+            if scope != ""
+              if request_body[scope] && request_body[scope][name].nil?
+                request_body[scope][name] = ''
+              end
+            else
+              if request_body[name].nil?
+                request_body[name] = ''
+              end
+            end
+          end
+        end
       end
 
       request_body.map do | key, value |
-        {
-          key: key,
-          value: value.map do | k, v |
+        if !value.respond_to? :map
+          { key: key, value: value }
+        else
+          required_values = value.map do | k, v |
             { k: k, v: v }
           end
-        }
+          {
+            key: key,
+            value: required_values
+          }
+        end
       end
     end
+
+    def contains_scoped_parameter(hash, parameter)
+        scope = parameter[:scope]
+        name = parameter[:name]
+
+        hash[scope] && hash[scope][name]
+    end
+
 
     def transform_request_url_parameters(request_url_string)
       params = request_url_string.scan(/([\w]+)\/([0-9]+)/)

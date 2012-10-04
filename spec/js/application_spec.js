@@ -33,4 +33,26 @@ describe('Application', function() {
             });
         });
     });
+
+    describe("Getting the data for POST body parameters", function() {
+        beforeEach(function(){
+            this.wurlForm = $('<form class="wurlForm"></form>');
+            this.wrapper = $('<div class="url"></div>');
+            this.wrapper.append($('<input id="wurl_request_method" value="POST">'));
+            this.wrapper.append($('<input class="value" id="post_body_values_" name="post_body_values[paid]" data-key="paid" type="text" value="lord">'));
+            this.wrapper.append($('<input class="value" id="post_body_values_" name="post_body_values[blah]" data-key="blah" type="text" value="herpington">'));
+            this.wurlForm.append(this.wrapper);
+
+            // For CodeMirror setup
+            this.wurlForm.append($('<div class="response body"><textarea>Hello Wurld</textarea></div>'));
+            this.wurlForm.append($('<div class="response content_type"><textarea>Hello Wurld</textarea></div>'));
+            this.wurl = new Wurl(this.wurlForm);
+            this.urlParamField = this.wurlForm.find("input.value.url_param");
+            $('#jasmine_content').append(this.wurlForm);
+        });
+
+        it("should have the right parameters", function() {
+            expect(this.wurl.getData()).toBe("paid=lord&blah=herpington");
+        });
+    });
 });

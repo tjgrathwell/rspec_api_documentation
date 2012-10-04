@@ -209,19 +209,16 @@
                 <div class="post_body controls request_body_parameters">
                     <textarea id="wurl_request_body" name="wurl[request_body]" rows="5"
                               disabled="disabled" class="textarea_disabled" style="display:none;">
-                    {{ request_body }}
+                        {{ request_body }}
                     </textarea>
                     {{# request_body_parameters_hash }}
-                    <span class="scope">Scope: {{ key }}</span>
-                    {{# value }}
                     <div class="post_body_pair">
                         <input disabled=disabled class="key" id="post_body_keys_"
-                               name="post_body_keys[{{ key }}][{{ k }}]" type="text" value="{{ k }}">
-                        <input class="value" id="post_body_values_" name="post_body_values[{{ key }}][{{ k }}]"
-                               data-parent="{{ key}}" data-key="{{ k }}" type="text"
-                               value="{{ v }}">
+                               name="post_body_keys[{{ key }}]" type="text" value="{{ key }}">
+                        <input class="value" id="post_body_values_" name="post_body_values[{{ key }}]"
+                               data-key="{{ key }}" type="text"
+                               value="{{ value }}">
                     </div>
-                    {{/ value }}
                     {{/ request_body_parameters_hash }}
                 </div>
             </div>

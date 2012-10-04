@@ -196,20 +196,16 @@ function Wurl(wurlForm) {
   this.getData = function () {
     var method = $('#wurl_request_method', self.$wurlForm).val();
     if ($.inArray(method, ["PUT", "POST", "DELETE"]) > -1) {
-      var $fields = $("input[name*=post_body_values]");
+      var $fields = this.$wurlForm.find("input[name*=post_body_values]");
       var processedFields = _.map($fields, function(el) {
-          return { parent: $(el).data('parent'), key: $(el).data("key"), value: $(el).val() };
+          return { key: $(el).data("key"), value: $(el).val() };
       });
 
-      var parents = _.uniq(_.pluck(processedFields, 'parent'));
       var requestBody = {};
-      _.each(parents, function(parent) {
-        requestBody[parent] = {};
-        _.each(processedFields, function(field) {
-            var key = field.key;
-            var value = field.value;
-            requestBody[parent][key] = value;
-        });
+      _.each(processedFields, function(field) {
+          var key = field.key;
+          var value = field.value;
+          requestBody[key] = value;
       });
       var mode = $("input.key[value='Content-Type']").siblings("input.value").val();
       var requestBodyString = mode == "application/json" ?
@@ -223,10 +219,8 @@ function Wurl(wurlForm) {
 
   this.urlStringify = function(hash) {
       var params = [];
-      _.each(hash, function(parentValue, parentKey) {
-          _.each(parentValue, function(childValue, childKey) {
-              params.push(parentKey + "[" + childKey + "]=" + childValue);
-          });
+      _.each(hash, function(value, key) {
+          params.push(key + "=" + value);
       });
       return params.join("&")
   }

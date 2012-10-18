@@ -26,7 +26,7 @@ describe RspecApiDocumentation::WurlExample do
     describe "with JSON parameters" do
       let(:stub_object) do
         Object.new.tap { |o|
-          stub(o).metadata.with_any_args do
+          o.stub(:metadata).with(any_args) do
             { parameters:
               [
                 { name: "param1", description: "a parameter" },
@@ -56,7 +56,7 @@ describe RspecApiDocumentation::WurlExample do
     describe "with URL encoded parameters" do
       let(:stub_object) do
         Object.new.tap { |o|
-          stub(o).metadata.with_any_args do
+          o.stub(:metadata).with(any_args) do
             { parameters:
               [
                 { name: "param1", description: "a parameter" },

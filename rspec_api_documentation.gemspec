@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "json", ">= 1.4.6"
 
   s.add_development_dependency "fakefs"
-  s.add_development_dependency "rr"
   s.add_development_dependency "sinatra"
   s.add_development_dependency "aruba"
   s.add_development_dependency "capybara"

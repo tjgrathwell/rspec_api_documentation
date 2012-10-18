@@ -2,7 +2,28 @@ require 'mustache'
 require 'json'
 require 'cgi'
 
+
 module RspecApiDocumentation
+  class KeyValueArray < Array
+    def [](arg)
+      tmp = find{ |e| e[:key] == arg }
+      if tmp
+        tmp[:value]
+      else
+        nil
+      end
+    end
+
+    def []=(arg, val)
+      tmp = find{ |e| e[:key] == arg }
+      if tmp
+        tmp[:value] = val
+      else
+        self << {:key => arg, :value => val}
+      end
+    end
+  end
+
   class WurlWriter
     attr_accessor :index, :configuration
 
@@ -106,12 +127,12 @@ module RspecApiDocumentation
     def transform_request_body_parameters(request_body_string, request_content_type)
       begin
         request_body = if request_content_type == "application/json"
-                         JSON.parse(request_body_string)
+                         KeyValueArray.new JSON.parse(request_body_string).map {|k,v| {:key => k, :value => v } }
                        else
                          parse_url_query_params(request_body_string)
                        end
       rescue Exception => e
-        request_body = {}
+        request_body = KeyValueArray.new
       end
 
       if @example.metadata && @example.metadata[:parameters]
@@ -137,16 +158,14 @@ module RspecApiDocumentation
         end
       end
 
-      request_body.map do | key, value |
-        { key: key, value: value }
-      end
+      request_body
     end
 
-    def contains_scoped_parameter(hash, parameter)
+    def contains_scoped_parameter(keyValArr, parameter)
         scope = parameter[:scope]
         name = parameter[:name]
 
-        hash[scope] && hash[scope][name]
+        keyValArr[scope] && keyValArr[scope][name]
     end
 
 
@@ -161,9 +180,11 @@ module RspecApiDocumentation
 
     def parse_url_query_params(url_params_string)
       flat = CGI.parse(url_params_string)
-      nested = {}
+      nested = KeyValueArray.new
       flat.each do |key, value|
-        nested[key] = value.first
+        value.each do |item|
+          nested << { :key => key, :value => item }
+        end
       end
       nested
     end

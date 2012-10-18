@@ -82,5 +82,33 @@ describe RspecApiDocumentation::WurlExample do
         ]
       end
     end
+
+    describe "with URL encoded arrays" do
+      let(:stub_object) do
+        Object.new.tap { |o|
+          stub(o).metadata.with_any_args do
+            { parameters:
+              [
+                { name: "param1[]", description: "a parameter" },
+                { name: "param2", description: "a second parameter" }
+            ]
+            }
+          end
+        }
+      end
+      let(:request_body_string) { 'param1%5B%5D=1&param1%5B%5D=2&param2=' }
+      let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
+
+      it 'shows optional parameters that are not in the initial request string' do
+        wurl_example.transform_request_body_parameters(request_body_string, 'application/html').should == [
+            {:key => 'param1[]', :value => '1'},
+            {:key => 'param1[]', :value => '2'},
+            {:key => 'param2', :value => ''}
+        ]
+      end
+    end
+
+
+
   end
 end

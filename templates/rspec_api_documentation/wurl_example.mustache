@@ -218,6 +218,8 @@
                         <input class="value" id="post_body_values_" name="post_body_values[{{ key }}]"
                                data-key="{{ key }}" type="text"
                                value="{{ value }}">
+                        {{# not_required }}<a class="btn delete_body_param btn-small btn-danger" title="delete parameter"><i
+                                class="icon-remove icon-white"></i></a>{{/ not_required }}
                     </div>
                     {{/ request_body_parameters_hash }}
                 </div>

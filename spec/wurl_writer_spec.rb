@@ -12,12 +12,12 @@ describe RspecApiDocumentation::WurlExample do
 
     it 'transforms the url params' do
       wurl_example.transform_request_url_parameters('/accounts/1/orders/2').should == [
-          {:key => 'accounts', :value => '1'},
-          {:key => 'orders', :value => '2'}
+        {:key => 'accounts', :value => '1'},
+        {:key => 'orders', :value => '2'}
       ]
       wurl_example.transform_request_url_parameters('/admin/accounts/1/orders/2/blah').should == [
-          {:key => 'accounts', :value => '1'},
-          {:key => 'orders', :value => '2'}
+        {:key => 'accounts', :value => '1'},
+        {:key => 'orders', :value => '2'}
       ]
     end
   end
@@ -27,28 +27,29 @@ describe RspecApiDocumentation::WurlExample do
       let(:stub_object) do
         Object.new.tap { |o|
           o.stub(:metadata).with(any_args) do
-            { parameters:
-              [
-                { name: "param1", description: "a parameter" },
-                { name: "param2", description: "a second parameter" },
-                { name: "name", description: "some name" },
-                { name: "paid", description: "paid?" },
-                { name: "email", description: "the email" }
-            ]
+            {
+              parameters: [
+                {name: "name", description: "some name", :required => true},
+                {name: "paid", description: "paid?", :required => true},
+                {name: "email", description: "the email", :required => true},
+                {name: "param1", description: "a parameter"},
+                {name: "param2", description: "a second parameter"}
+              ]
             }
           end
         }
       end
+
       let(:request_body_string) { '{"name":"Order 1","paid":true,"email":"email@example.com"}' }
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
         wurl_example.transform_request_body_parameters(request_body_string, 'application/json').should == [
-            {:key => 'name', :value => 'Order 1'},
-            {:key => 'paid', :value => true},
-            {:key => 'email', :value => 'email@example.com'},
-            {:key => 'param1', :value => ''},
-            {:key => 'param2', :value => ''}
+          {:key => 'name', :value => 'Order 1', :not_required => false},
+          {:key => 'paid', :value => true, :not_required => false},
+          {:key => 'email', :value => 'email@example.com', :not_required => false},
+          {:key => 'param1', :value => ''},
+          {:key => 'param2', :value => ''}
         ]
       end
     end
@@ -57,28 +58,29 @@ describe RspecApiDocumentation::WurlExample do
       let(:stub_object) do
         Object.new.tap { |o|
           o.stub(:metadata).with(any_args) do
-            { parameters:
-              [
-                { name: "param1", description: "a parameter" },
-                { name: "param2", description: "a second parameter" },
-                { name: "name", description: "some name" },
-                { name: "paid", description: "paid?" },
-                { name: "email", description: "the email" }
+            {
+              parameters: [
+                {name: "param1", description: "a parameter"},
+                {name: "param2", description: "a second parameter"},
+                {name: "name", description: "some name"},
+                {name: "paid", description: "paid?"},
+                {name: "email", description: "the email"}
               ]
             }
           end
         }
       end
+
       let(:request_body_string) { 'name=Order%201&paid=true&email=email@example.com' }
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
         wurl_example.transform_request_body_parameters(request_body_string, 'application/html').should == [
-            {:key => 'name', :value => 'Order 1'},
-            {:key => 'paid', :value => 'true'},
-            {:key => 'email', :value => 'email@example.com'},
-            {:key => 'param1', :value => ''},
-            {:key => 'param2', :value => ''}
+          {:key => 'name', :value => 'Order 1', :not_required => true},
+          {:key => 'paid', :value => 'true', :not_required => true},
+          {:key => 'email', :value => 'email@example.com', :not_required => true},
+          {:key => 'param1', :value => ''},
+          {:key => 'param2', :value => ''}
         ]
       end
     end
@@ -87,27 +89,27 @@ describe RspecApiDocumentation::WurlExample do
       let(:stub_object) do
         Object.new.tap { |o|
           o.stub(:metadata).with(any_args) do
-            { parameters:
-              [
-                { name: "param1[]", description: "a parameter" },
-                { name: "param2", description: "a second parameter" }
-            ]
+            {
+              parameters: [
+                {name: "param1[]", description: "a parameter"},
+                {name: "param2", description: "a second parameter"}
+              ]
             }
           end
         }
       end
+
       let(:request_body_string) { 'param1%5B%5D=1&param1%5B%5D=2&param2=' }
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
         wurl_example.transform_request_body_parameters(request_body_string, 'application/html').should == [
-            {:key => 'param1[]', :value => '1'},
-            {:key => 'param1[]', :value => '2'},
-            {:key => 'param2', :value => ''}
+          {:key => 'param1[]', :value => '1', :not_required => true},
+          {:key => 'param1[]', :value => '2', :not_required => true},
+          {:key => 'param2', :value => '', :not_required => true}
         ]
       end
     end
-
 
 
   end

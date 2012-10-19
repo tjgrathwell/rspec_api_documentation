@@ -74,6 +74,10 @@ function Wurl(wurlForm) {
     self.deleteParam(this);
   });
 
+  $('.delete_body_param', this.$wurlForm).live('click', function (e) {
+    self.deletePostBodyParam(this);
+  });
+
   $(".trash_headers", this.$wurlForm).click(function () {
     self.trashHeaders();
   });
@@ -128,7 +132,14 @@ function Wurl(wurlForm) {
   this.deleteParam = function (element) {
     var $fields = $(element).closest(".param_pair");
     $fields.slideUp(function () {
-      $paramFields.remove();
+      $fields.remove();
+    });
+  };
+
+  this.deletePostBodyParam = function (element) {
+    var $fields = $(element).closest(".post_body_pair");
+    $fields.slideUp(function () {
+      $fields.remove();
     });
   };
 

@@ -138,10 +138,13 @@ module RspecApiDocumentation
       if @example.metadata && @example.metadata[:parameters]
         @example.metadata[:parameters].each do |parameter|
           name = parameter[:name]
-          if parameter[:scope]
-            scope = parameter[:scope].to_s
-          else
-            scope = ''
+          required = !!parameter[:required]
+          scope = parameter[:scope].to_s || ''
+
+          request_body.each do |element|
+            if element[:key] == name
+              element.merge!({:not_required => !required})
+            end
           end
 
           unless contains_scoped_parameter(request_body, parameter)

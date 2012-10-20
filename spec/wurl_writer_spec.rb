@@ -6,18 +6,19 @@ describe RspecApiDocumentation::WurlExample do
     let(:wurl_example) { described_class.new(nil, RspecApiDocumentation::Configuration.new) }
 
     it 'does not interpret controller actions/namespaces as params' do
-      wurl_example.transform_request_url_parameters('/admin').should be_empty
-      wurl_example.transform_request_url_parameters('/admin/dashboard').should be_empty
+      wurl_example.transform_request_url_parameters('/admin', '/admin').should be_empty
+      wurl_example.transform_request_url_parameters('/admin/dashboard', '/admin/dashboard').should be_empty
     end
 
     it 'transforms the url params' do
-      wurl_example.transform_request_url_parameters('/accounts/1/orders/2').should == [
-        {:key => 'accounts', :value => '1'},
-        {:key => 'orders', :value => '2'}
+      wurl_example.transform_request_url_parameters('/admin/accounts/:account_id/orders/:order_id', '/accounts/1/orders/2').should == [
+        {:key => 'account_id', :value => '1', :resource => 'accounts'},
+        {:key => 'order_id', :value => '2', :resource => 'orders'}
       ]
-      wurl_example.transform_request_url_parameters('/admin/accounts/1/orders/2/blah').should == [
-        {:key => 'accounts', :value => '1'},
-        {:key => 'orders', :value => '2'}
+
+      wurl_example.transform_request_url_parameters('/admin/accounts/:account_id/orders/:order_id/blah', '/accounts/1/orders/2/blah').should == [
+          {:key => 'account_id', :value => '1', :resource => 'accounts'},
+          {:key => 'order_id', :value => '2', :resource => 'orders'}
       ]
     end
   end

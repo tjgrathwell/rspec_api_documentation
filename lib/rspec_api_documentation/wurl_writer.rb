@@ -111,7 +111,7 @@ module RspecApiDocumentation
 
         hash[:request_body_parameters_hash] = transform_request_body_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
 
-        hash[:request_url_parameters_hash] = transform_request_url_parameters(hash[:request_path_no_query])
+        hash[:request_url_parameters_hash] = transform_request_url_parameters(@example.metadata[:route], hash[:request_path_no_query])
 
         hash[:response_headers_text] = format_hash(hash[:response_headers])
         hash[:response_status] = hash[:response_status].to_s + " " + Rack::Utils::HTTP_STATUS_CODES[hash[:response_status]].to_s
@@ -172,12 +172,11 @@ module RspecApiDocumentation
     end
 
 
-    def transform_request_url_parameters(request_url_string)
-      params = request_url_string.scan(/([\w]+)\/([0-9]+)/)
-      return [] unless params
+    def transform_request_url_parameters(request_url_pattern, request_url_string)
+      params_array = request_url_pattern.scan(/(\w+)\/:(\w+)/).zip(request_url_string.scan(/\d+/))
 
-      params.map do |param|
-        { key: param[0], value: param[1] }
+      params_array.map do |param|
+        { :key => param[0].last, :value => param[1], :resource => param[0].first }
       end
     end
 

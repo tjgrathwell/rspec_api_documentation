@@ -45,7 +45,7 @@ describe RspecApiDocumentation::WurlExample do
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
-        wurl_example.transform_request_body_parameters(request_body_string, 'application/json').should == [
+        wurl_example.get_all_request_parameters(request_body_string, 'application/json').should == [
           {:key => 'name', :value => 'Order 1', :not_required => false},
           {:key => 'paid', :value => true, :not_required => false},
           {:key => 'email', :value => 'email@example.com', :not_required => false},
@@ -76,7 +76,7 @@ describe RspecApiDocumentation::WurlExample do
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
-        wurl_example.transform_request_body_parameters(request_body_string, 'application/html').should == [
+        wurl_example.get_all_request_parameters(request_body_string, 'application/html').should == [
           {:key => 'name', :value => 'Order 1', :not_required => true},
           {:key => 'paid', :value => 'true', :not_required => true},
           {:key => 'email', :value => 'email@example.com', :not_required => true},
@@ -104,14 +104,12 @@ describe RspecApiDocumentation::WurlExample do
       let(:wurl_example) { described_class.new(stub_object, RspecApiDocumentation::Configuration.new) }
 
       it 'shows optional parameters that are not in the initial request string' do
-        wurl_example.transform_request_body_parameters(request_body_string, 'application/html').should == [
+        wurl_example.get_all_request_parameters(request_body_string, 'application/html').should == [
           {:key => 'param1[]', :value => '1', :not_required => true},
           {:key => 'param1[]', :value => '2', :not_required => true},
           {:key => 'param2', :value => '', :not_required => true}
         ]
       end
     end
-
-
   end
 end

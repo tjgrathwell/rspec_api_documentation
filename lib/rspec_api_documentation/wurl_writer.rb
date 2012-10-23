@@ -85,6 +85,7 @@ module RspecApiDocumentation
     end
 
     def method_missing(method, *args, &block)
+      raise "The example cannot be nil!" if @example.nil?
       @example.send(method, *args, &block)
     end
 
@@ -103,16 +104,26 @@ module RspecApiDocumentation
 
     def requests
       super.collect do |hash|
+        # Headers
         hash[:request_headers_hash] = hash[:request_headers].collect { |k, v| {:name => k, :value => v} }
         hash[:request_headers_text] = format_hash(hash[:request_headers])
+
+        # Path
         hash[:request_path_no_query] = hash[:request_path].split('?').first
+
+        # Query Parameters
         hash[:request_query_parameters_text] = format_hash(hash[:request_query_parameters])
         hash[:request_query_parameters_hash] = hash[:request_query_parameters].collect { |k, v| {:name => k, :value => v} } if hash[:request_query_parameters].present?
 
-        hash[:request_body_parameters_hash] = transform_request_body_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
+        # Url & Body Parameters
+        route = @example.metadata[:route]
+        url_params = route.scan(/:(\w+)/).flatten
+        all_parameters = get_all_request_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
 
         hash[:request_url_parameters_hash] = transform_request_url_parameters(@example.metadata[:route], hash[:request_path_no_query])
+        hash[:request_body_parameters_hash] = extract_body_parameters(all_parameters, url_params)
 
+        # Response
         hash[:response_headers_text] = format_hash(hash[:response_headers])
         hash[:response_status] = hash[:response_status].to_s + " " + Rack::Utils::HTTP_STATUS_CODES[hash[:response_status]].to_s
         if @host
@@ -124,7 +135,11 @@ module RspecApiDocumentation
       end
     end
 
-    def transform_request_body_parameters(request_body_string, request_content_type)
+    def extract_body_parameters(all_parameters, url_params)
+      all_parameters.reject { |parameter| url_params.include? parameter[:key] }
+    end
+
+    def get_all_request_parameters(request_body_string, request_content_type)
       begin
         request_body = if request_content_type == "application/json"
                          KeyValueArray.new JSON.parse(request_body_string).map {|k,v| {:key => k, :value => v } }
@@ -170,7 +185,6 @@ module RspecApiDocumentation
 
         keyValArr[scope] && keyValArr[scope][name]
     end
-
 
     def transform_request_url_parameters(request_url_pattern, request_url_string)
       params_array = request_url_pattern.scan(/(\w+)\/:(\w+)/).zip(request_url_string.scan(/\d+/))

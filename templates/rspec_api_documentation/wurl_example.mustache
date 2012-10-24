@@ -136,42 +136,6 @@
             </div>
 
             <div class="control-group">
-                <label class="control-label with-button">
-                    <a class="btn trash_headers btn-small btn-danger" title="trash all headers"><i
-                            class="icon-trash icon-white"></i></a>
-                    <a class="btn add_header btn-small btn-inverse" title="add header"><i
-                            class="icon-plus icon-white"></i></a>
-                    <span class="text">Headers</span>
-                </label>
-
-                <div class="headers controls">
-                    <div class="header_pair" style="display:none">
-                        <input class="key ui-autocomplete-input" disabled="disabled" id="header_keys_"
-                               name="header_keys[]"
-                               type="text" autocomplete="off" role="textbox" aria-autocomplete="list"
-                               aria-haspopup="true">
-                        <input class="value" disabled="disabled" id="header_values_" name="header_values[]"
-                               type="text">
-                        <a class="btn delete_header btn-small btn-danger" title="delete header"><i
-                                class="icon-remove icon-white"></i></a>
-                    </div>
-
-                    {{# request_headers_hash }}
-                    <div class="header_pair">
-                        <input class="key ui-autocomplete-input" id="header_keys_" name="header_keys[]"
-                               type="text" disabled="disabled"
-                               autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"
-                               value="{{ name }}">
-                        <input class="value" id="header_values_" name="header_values[]" type="text"
-                               value="{{ value }}">
-                        <a class="btn delete_header btn-small btn-danger" title="delete header"><i
-                                class="icon-remove icon-white"></i></a>
-                    </div>
-                    {{/ request_headers_hash }}
-
-                </div>
-            </div>
-            <div class="control-group">
                 <label class="control-label">
                     <a class="btn trash_queries btn-small btn-danger" title="trash all parameters"><i
                             class="icon-trash icon-white"></i></a>

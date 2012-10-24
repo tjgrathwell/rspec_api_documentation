@@ -42,6 +42,10 @@ module RspecApiDocumentation
       metadata[:explanation] || nil
     end
 
+    def parameters
+      metadata[:parameters] || []
+    end
+
     def requests
       metadata[:requests] || []
     end

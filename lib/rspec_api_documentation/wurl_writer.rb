@@ -102,6 +102,19 @@ module RspecApiDocumentation
       "#{basename}.html"
     end
 
+    def parameters
+      super.collect do |hash|
+        modified_parameters = @example.metadata[:parameters]
+        mark_url_params_as_required!(url_params, modified_parameters)
+
+        new_stuff = modified_parameters.find do |param|
+          param[:name] == hash[:name]
+        end
+
+        hash.merge(new_stuff)
+      end
+    end
+
     def requests
       super.collect do |hash|
         # Headers
@@ -116,8 +129,6 @@ module RspecApiDocumentation
         hash[:request_query_parameters_hash] = hash[:request_query_parameters].collect { |k, v| {:name => k, :value => v} } if hash[:request_query_parameters].present?
 
         # Url & Body Parameters
-        route = @example.metadata[:route]
-        url_params = route.scan(/:(\w+)/).flatten
         all_parameters = get_all_request_parameters(hash[:request_body], hash[:request_headers]["Content-Type"])
 
         hash[:request_url_parameters_hash] = transform_request_url_parameters(@example.metadata[:route], hash[:request_path_no_query])
@@ -132,6 +143,21 @@ module RspecApiDocumentation
           hash[:curl] = nil
         end
         hash
+      end
+    end
+
+    def url_params
+      route.scan(/:(\w+)/).flatten
+    end
+
+    def route
+      @example.metadata[:route]
+    end
+
+    def mark_url_params_as_required!(url_params, all_params)
+      url_params.each do |url_param|
+        match = all_params.find { |param| param[:name] == url_param }
+        match[:required] = true if match
       end
     end
 

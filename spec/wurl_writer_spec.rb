@@ -112,4 +112,28 @@ describe RspecApiDocumentation::WurlExample do
       end
     end
   end
+
+  describe "#mark_url_params_as_required!" do
+    let(:url_params) { ["dataset_id"] }
+    let(:all_params) {
+      [
+          { :name => "dataset_id", :description => "Shiny"},
+          { :name => "unrelated_id", :description => "Not shiny"}
+      ]
+    }
+
+    let(:wurl_example) { described_class.new(nil, RspecApiDocumentation::Configuration.new) }
+
+    before do
+      wurl_example.mark_url_params_as_required!(url_params, all_params)
+    end
+
+    it "marks url params as required" do
+      all_params[0][:required].should be_true
+    end
+
+    it "doesn't mark non-url parameters as required" do
+      all_params[1][:required].should be_false
+    end
+  end
 end

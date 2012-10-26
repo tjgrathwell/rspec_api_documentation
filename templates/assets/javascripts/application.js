@@ -111,7 +111,7 @@ function Wurl(wurlForm) {
   });
 
   $(".clear_fields", this.$wurlForm).click(function () {
-    $("input[type=text], textarea", self.$wurlForm).val("");
+    $("input[type=text]:enabled, textarea", self.$wurlForm).val("");
     self.trashHeaders();
     self.trashQueries();
   });
@@ -149,7 +149,6 @@ function Wurl(wurlForm) {
         $(element).remove();
       });
     });
-    this.addInputs('header');
   };
 
   this.trashQueries = function () {
@@ -158,7 +157,6 @@ function Wurl(wurlForm) {
         $(element).remove();
       });
     });
-    this.addInputs('param');
   };
 
   this.updateBodyInput = function () {

@@ -193,8 +193,8 @@ function Wurl(wurlForm) {
   this.queryParams = function () {
     var toReturn = [];
     $(".param_pair:visible", self.$wurlForm).each(function (i, element) {
-      paramKey = $(element).find('input.key').val();
-      paramValue = $(element).find('input.value').val();
+      var paramKey = $(element).find('input.key').val();
+      var paramValue = $(element).find('input.value').val();
       if (paramKey.length && paramValue.length) {
         toReturn.push(paramKey + '=' + paramValue);
       }
@@ -232,7 +232,7 @@ function Wurl(wurlForm) {
           params.push(key + "=" + value);
       });
       return params.join("&")
-  }
+  };
 
   this.url = function () {
     var url = $('#wurl_request_url', self.$wurlForm).val();

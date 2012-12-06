@@ -28,6 +28,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "rack-test", ">= 0.5.5"
   s.add_development_dependency "rack-oauth2", ">= 0.14.4"
+  s.add_development_dependency "jasmine", "~> 1.2.0"
+  s.add_development_dependency "jasmine-core", "~> 1.2.0"
 
   s.files        = Dir.glob("lib/**/*") + Dir.glob("templates/**/*")
   s.require_path = 'lib'

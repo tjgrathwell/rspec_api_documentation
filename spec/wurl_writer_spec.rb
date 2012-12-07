@@ -151,10 +151,11 @@ describe RspecApiDocumentation::WurlExample do
           :route => '/something/:id',
           :requests => [
               {
-                  :request_method => "GET",
-                  :request_path => "/something/7",
+                  :request_method => 'POST',
+                  :request_path => '/something/7',
                   :request_headers => {"Header" => "value"},
-                  :request_query_parameters => {"foo" => "bar", "baz" => "Bar!"},
+                  :request_query_parameters => {"query" => "value"},
+                  :request_body => "multi_value_param%5B%5D=value1&multi_value_param%5B%5D=value2&foo=bar",
                   :response_status => 200,
                   :response_status_text => "OK",
                   :response_headers => {"Header" => "value", "Foo" => "bar"},
@@ -173,15 +174,26 @@ describe RspecApiDocumentation::WurlExample do
       FakeFS::FileSystem.clone(templates_path)
     end
 
-    it "generates a fixture" do
+    it 'generates a fixture for post' do
       html = wurl_example.render
-      fixture_path = File.expand_path('./javascripts/fixtures/wurl_body.html', File.dirname(__FILE__))
+      fixture_path = File.expand_path('./javascripts/fixtures/wurl_post.html', File.dirname(__FILE__))
       FakeFS.deactivate!
       FileUtils.mkpath(File.dirname(fixture_path))
       File.open(fixture_path, 'w') do |f|
         f << Nokogiri::HTML::Document.parse(html).css(".container").to_s
       end
+    end
 
+    it "generates a fixture for get" do
+      metadata[:requests][0][:request_method] = 'GET'
+      metadata[:requests][0][:request_body] = ''
+      html = wurl_example.render
+      fixture_path = File.expand_path('./javascripts/fixtures/wurl_get.html', File.dirname(__FILE__))
+      FakeFS.deactivate!
+      FileUtils.mkpath(File.dirname(fixture_path))
+      File.open(fixture_path, 'w') do |f|
+        f << Nokogiri::HTML::Document.parse(html).css(".container").to_s
+      end
     end
   end
 end

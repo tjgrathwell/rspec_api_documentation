@@ -170,8 +170,8 @@ function Wurl(wurlForm) {
   this.updateBodyInput();
 
   this.updateUrl = function() {
-      var url = this.url();
-      var params = _.each($("input.url_param", self.$wurlForm), function(el) {
+      var url = $('input#wurl_request_url').val();
+      _.each($("input.url_param", self.$wurlForm), function(el) {
           var key = $(el).data('key');
           var value = $(el).val();
           if(value.match(/^[\d]+$/)) {
@@ -202,43 +202,22 @@ function Wurl(wurlForm) {
     return toReturn.join("&");
   };
 
-  this.getData = function () {
-    var method = $('#wurl_request_method', self.$wurlForm).val();
-    if ($.inArray(method, ["PUT", "POST", "DELETE"]) > -1) {
-      var $fields = this.$wurlForm.find("input[name*=post_body_values]");
-      var processedFields = _.map($fields, function(el) {
-          return { key: $(el).data("key"), value: $(el).val() };
-      });
+  this.getBody = function () {
+    var $fields = this.$wurlForm.find("input[name*=post_body_values]");
+    var processedFields = _.map($fields, function(el) {
+        return { key: $(el).data("key"), value: $(el).val() };
+    });
 
-      var requestBody = {};
-      _.each(processedFields, function(field) {
-          var key = field.key;
-          var value = field.value;
-          requestBody[key] = value;
-      });
-      var mode = $("input.key[value='Content-Type']").siblings("input.value").val();
-      var requestBodyString = mode == "application/json" ?
-          JSON.stringify(requestBody) :
-          this.urlStringify(requestBody);
-      return requestBodyString;
-    } else {
-      return self.queryParams();
-    }
-  };
-
-  this.urlStringify = function(hash) {
-      var params = [];
-      _.each(hash, function(value, key) {
-          params.push(key + "=" + value);
-      });
-      return params.join("&")
+    var keyValPairs = _.map(processedFields, function(hash) {
+      return hash.key + '=' + hash.value;
+    });
+    return keyValPairs.join('&');
   };
 
   this.url = function () {
     var url = $('#wurl_request_url', self.$wurlForm).val();
-    var method = $('#wurl_request_method', self.$wurlForm).val();
     var params = self.queryParams();
-    if ($.inArray(method, ["PUT", "POST", "DELETE"]) > -1 && params.length) {
+    if (params.length) {
       url += "?" + params;
     }
     return url[0] == '/' ? url : '/' + url;
@@ -256,7 +235,7 @@ function Wurl(wurlForm) {
       },
       type:$('#wurl_request_method', self.$wurlForm).val(),
       url:this.url(),
-      data:this.getData(),
+      data:this.getBody(),
       complete:function (jqXHR) {
         var $status = $('.response.status', self.$wurlForm);
         $status.html(jqXHR.status + ' ' + jqXHR.statusText);

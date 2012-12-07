@@ -134,7 +134,7 @@
 
                 </div>
             </div>
-
+            {{#is_get}}
             <div class="control-group">
                 <label class="control-label">
                     <a class="btn trash_queries btn-small btn-danger" title="trash all parameters"><i
@@ -165,6 +165,9 @@
                     {{/ request_query_parameters_hash }}
                 </div>
             </div>
+            {{/is_get}}
+
+            {{^is_get}}
             <div class="control-group">
                 <label class="control-label">
                     <span>Body</span>
@@ -188,6 +191,8 @@
                     {{/ request_body_parameters_hash }}
                 </div>
             </div>
+            {{/is_get}}
+
             <div class="control-group">
                 <div class="controls">
                     <input class="clear_fields btn" id="clear_fields" type="button" value="Clear">

@@ -117,6 +117,7 @@ module RspecApiDocumentation
 
     def requests
       super.collect do |hash|
+        hash[:is_get] = hash[:request_method] == 'GET'
         # Headers
         hash[:request_headers_hash] = hash[:request_headers].collect { |k, v| {:name => k, :value => v} }
         hash[:request_headers_text] = format_hash(hash[:request_headers])

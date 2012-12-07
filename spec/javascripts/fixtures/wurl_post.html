@@ -1,0 +1,139 @@
+<div class="container">
+<h1> API</h1>
+
+<div class="article">
+<h2>test example</h2>
+
+<h3>Parameters</h3>
+<table class="parameters table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+        <span class="name">foo</span>
+        </td>
+        <td>
+            <span class="description">Foo!</span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        <span class="name">bar</span>
+        </td>
+        <td>
+            <span class="description">Bar!</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="request">
+    <h3>Request</h3>
+
+    <h4>Headers</h4>
+    <pre class="request headers">Header: value</pre>
+
+    <h4>Route</h4>
+    <pre class="request route highlight">POST /something/7</pre>
+
+    <h4>Query Parameters</h4>
+    <pre class="request query_parameters highlight">query: value</pre>
+
+    <h4>Body</h4>
+
+    <div class="request body"><textarea>multi_value_param%5B%5D=value1&amp;multi_value_param%5B%5D=value2&amp;foo=bar</textarea></div>
+
+
+    <h4>wURL</h4>
+
+    <div class="wurl_form form-horizontal" id="wurl_form">
+        <form accept-charset="UTF-8" class="new_wurl well" id="new_wurl">
+            <input class="request content_type" type="hidden" value="">
+            <input class="response content_type" type="hidden" value="">
+
+            <div class="control-group">
+                <label class="control-label">
+                    URL
+                </label>
+
+                <div class="controls url">
+                    <input disabled id="wurl_request_method" name="wurl[request_method]" type="text" value="POST">
+                    <input disabled id="wurl_request_url" name="wurl[request_url]" value="/something/7">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    URL Parameters
+                </label>
+
+                <div class="controls url">
+                    <div class="post_url_pair">
+                        <input class="key" disabled id="post_url_keys_" name="post_url_keys[id]" type="text" value="id">
+                        <input class="value url_param" data-key="something" data-parent="id" id="post_url_values_" name="post_url_values[id]" type="text" value="7">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <span>Body</span>
+                </label>
+
+                <div class="post_body controls request_body_parameters">
+                    <textarea class="textarea_disabled" disabled id="wurl_request_body" name="wurl[request_body]" rows="5" style="display:none;">
+                        multi_value_param%5B%5D=value1&amp;multi_value_param%5B%5D=value2&amp;foo=bar
+                    </textarea>
+                    <div class="post_body_pair">
+                        <input class="key" disabled id="post_body_keys_" name="post_body_keys[multi_value_param[]]" type="text" value="multi_value_param[]">
+                        <input class="value" data-key="multi_value_param[]" id="post_body_values_" name="post_body_values[multi_value_param[]]" type="text" value="value1">
+                        
+                    </div>
+                    <div class="post_body_pair">
+                        <input class="key" disabled id="post_body_keys_" name="post_body_keys[multi_value_param[]]" type="text" value="multi_value_param[]">
+                        <input class="value" data-key="multi_value_param[]" id="post_body_values_" name="post_body_values[multi_value_param[]]" type="text" value="value2">
+                        
+                    </div>
+                    <div class="post_body_pair">
+                        <input class="key" disabled id="post_body_keys_" name="post_body_keys[foo]" type="text" value="foo">
+                        <input class="value" data-key="foo" id="post_body_values_" name="post_body_values[foo]" type="text" value="bar">
+                        <a class="btn delete_body_param btn-small btn-danger" title="delete parameter"><i class="icon-remove icon-white"></i></a>
+                    </div>
+                    <div class="post_body_pair">
+                        <input class="key" disabled id="post_body_keys_" name="post_body_keys[bar]" type="text" value="bar">
+                        <input class="value" data-key="bar" id="post_body_values_" name="post_body_values[bar]" type="text" value="">
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <input class="clear_fields btn" id="clear_fields" type="button" value="Clear">
+                    <input class="give_it_a_wurl btn btn-primary" type="submit" value="Give it a Wurl!">
+                </div>
+            </div>
+        </form>
+
+        <h3><a class="response_anchor"></a>Response</h3>
+        <h4>Headers</h4>
+        <pre class="response headers">Header: value
+Foo: bar</pre>
+
+        <h4>Status</h4>
+        <pre class="response status">200 OK</pre>
+
+        <h4>Body</h4>
+
+        <div class="response body"><textarea>body</textarea></div>
+    </div>
+</div>
+<hr>
+</div>
+</div>

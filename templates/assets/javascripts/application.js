@@ -62,6 +62,10 @@ function Wurl(wurlForm) {
     self.addInputs('header');
   });
 
+  $('.add_form_parameter', this.$wurlForm).click(function(){
+      self.addInputs("post_body");
+  });
+
   $('.add_param', this.$wurlForm).click(function () {
     self.addInputs('param');
   });
@@ -117,9 +121,10 @@ function Wurl(wurlForm) {
   });
 
   this.addInputs = function (type) {
-    var $fields = $('.' + type + '_pair', this.$wurlForm).first().clone();
+    var first = $('.' + type + '_pair', this.$wurlForm).first();
+    var $fields = first.clone();
     $fields.children('input').val("").attr('disabled', false);
-    $fields.hide().appendTo(this.$wurlForm.find('.' + type + 's')).slideDown('fast');
+    $fields.hide().appendTo(first.parent()).slideDown('fast');
   };
 
   this.deleteHeader = function (element) {
@@ -203,9 +208,9 @@ function Wurl(wurlForm) {
   };
 
   this.getBody = function () {
-    var $fields = this.$wurlForm.find("input[name*=post_body_values]");
-    var processedFields = _.map($fields, function(el) {
-        return { key: $(el).data("key"), value: $(el).val() };
+    var $pairs = this.$wurlForm.find(".post_body_pair");
+    var processedFields = _.map($pairs, function(el) {
+        return { key: $(el).find(".key").val(), value: $(el).find(".value").val() };
     });
 
     var keyValPairs = _.map(processedFields, function(hash) {

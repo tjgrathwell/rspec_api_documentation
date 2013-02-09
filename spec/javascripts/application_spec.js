@@ -43,6 +43,25 @@ describe('Application', function() {
             expect($("span:contains(Query)")).not.toExist();
         });
 
+        it("shows the add form parameters button", function() {
+            expect($(".add_form_parameter")).toExist();
+        });
+
+        describe("when the add form parameter button is clicked", function() {
+            it("shows a new row ", function() {
+                expect($(".post_body_pair").length).toEqual(4);
+                $(".add_form_parameter").click();
+                expect($(".post_body_pair").length).toEqual(5);
+            });
+
+            it("includes the new parameter in the payload", function() {
+                $(".add_form_parameter").click();
+                $(".post_body_pair:last .key").val("summer");
+                $(".post_body_pair:last .value").val("happiness");
+                expect(wurl.getBody()).toContain("summer=happiness");
+            });
+        });
+
         describe("the payload", function() {
             it("includes the parameters", function() {
                 expect(wurl.getBody()).toContain("foo=bar");

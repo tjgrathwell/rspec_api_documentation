@@ -121,10 +121,15 @@ function Wurl(wurlForm) {
   });
 
   this.addInputs = function (type) {
-    var first = $('.' + type + '_pair', this.$wurlForm).first();
-    var $fields = first.clone();
-    $fields.children('input').val("").attr('disabled', false);
-    $fields.hide().appendTo(first.parent()).slideDown('fast');
+    var existingRow = $('.' + type + '_pair', this.$wurlForm).first();
+
+    var $newRow = $('<div>', { "class": type+'_pair' });
+    $newRow.append($('<input class="key" type="text"> ' +
+                  '<input class="value" type="text"> ' +
+                  '<a class="btn delete_body_param btn-small btn-danger" title="delete parameter">' +
+                  '<i class="icon-remove icon-white"></i></a>'));
+
+    $newRow.hide().appendTo(existingRow.parent()).slideDown('fast');
   };
 
   this.deleteHeader = function (element) {

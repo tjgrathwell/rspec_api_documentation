@@ -48,10 +48,11 @@ describe('Application', function() {
         });
 
         describe("when the add form parameter button is clicked", function() {
-            it("shows a new row ", function() {
+            it("shows a new row", function() {
                 expect($(".post_body_pair").length).toEqual(4);
                 $(".add_form_parameter").click();
                 expect($(".post_body_pair").length).toEqual(5);
+                expect($(".post_body_pair:last").find(".delete_body_param")).toExist();
             });
 
             it("includes the new parameter in the payload", function() {
@@ -59,6 +60,33 @@ describe('Application', function() {
                 $(".post_body_pair:last .key").val("summer");
                 $(".post_body_pair:last .value").val("happiness");
                 expect(wurl.getBody()).toContain("summer=happiness");
+            });
+
+            it("does not generate the new row by cloning the first row", function() {
+                $(".post_body_pair:first").append("Hello");
+                $(".add_form_parameter").click();
+                expect($(".post_body_pair:last").text()).not.toContain("Hello");
+            });
+        });
+
+        describe("when the remove form parameter button is clicked", function() {
+            beforeEach(function() {
+                spyOn($.fn, "slideUp").andCallFake(function(callback) {
+                    callback();
+                });
+            });
+
+            it("removes the row", function() {
+                expect($(".post_body_pair").length).toEqual(4);
+
+                var row_to_delete = $(".post_body_pair").eq(2);
+                row_to_delete.find(".key").val('sunshine');
+                row_to_delete.find(".value").val('rainbows');
+                row_to_delete.find(".delete_body_param").click();
+
+                expect($(".post_body_pair").length).toEqual(3);
+                expect(wurl.url()).not.toContain('sunshine');
+                expect(wurl.url()).not.toContain('rainbows');
             });
         });
 

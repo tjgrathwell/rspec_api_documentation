@@ -47,6 +47,10 @@ describe('Application', function() {
             expect($(".add_form_parameter")).toExist();
         });
 
+        it("shows the trash icon for form parameters button", function() {
+            expect($(".trash_form_parameters")).toExist();
+        });
+
         describe("when the add form parameter button is clicked", function() {
             it("shows a new row", function() {
                 expect($(".post_body_pair").length).toEqual(4);
@@ -69,24 +73,75 @@ describe('Application', function() {
             });
         });
 
-        describe("when the remove form parameter button is clicked", function() {
+        describe("removing form parameters", function() {
+            var animated;
+
             beforeEach(function() {
+                animated = false;
                 spyOn($.fn, "slideUp").andCallFake(function(callback) {
+                    animated = true;
                     callback();
                 });
             });
 
-            it("removes the row", function() {
-                expect($(".post_body_pair").length).toEqual(4);
+            describe("by clicking the trash form parameters button", function() {
+                beforeEach(function() {
+                    $(".post_body_pair").eq(0).find(".value").val("1"); // required
+                    $(".post_body_pair").eq(1).find(".value").val("2"); // required
+                    $(".post_body_pair").eq(2).find(".value").val("3"); // removable
+                    $(".post_body_pair").eq(3).find(".value").val("4"); // required
 
-                var row_to_delete = $(".post_body_pair").eq(2);
-                row_to_delete.find(".key").val('sunshine');
-                row_to_delete.find(".value").val('rainbows');
-                row_to_delete.find(".delete_body_param").click();
+                    $(".add_form_parameter").click();                   // removable
+                    $(".add_form_parameter").click();                   // removable
 
-                expect($(".post_body_pair").length).toEqual(3);
-                expect(wurl.url()).not.toContain('sunshine');
-                expect(wurl.url()).not.toContain('rainbows');
+                    $(".post_body_pair").eq(4).find(".key").val("sunshine");
+                    $(".post_body_pair").eq(4).find(".value").val("rainbows");
+                    $(".post_body_pair").eq(5).find(".key").val("clouds");
+                    $(".post_body_pair").eq(5).find(".value").val("rain");
+
+                    expect($(".post_body_pair").length).toEqual(6);
+                    $(".trash_form_parameters").click();
+                });
+
+                it("deletes all new parameters", function() {
+                    expect($(".post_body_pair").length).toEqual(3);
+                    expect(wurl.url()).not.toContain('sunshine');
+                    expect(wurl.url()).not.toContain('rainbows');
+                    expect(wurl.url()).not.toContain('clouds');
+                    expect(wurl.url()).not.toContain('rain');
+                });
+
+                it("does not delete the required parameters", function() {
+                    expect($(".post_body_pair").eq(0).find(".value")).toHaveValue("1");
+                    expect($(".post_body_pair").eq(1).find(".value")).toHaveValue("2");
+                    expect($(".post_body_pair").eq(2).find(".value")).toHaveValue("4");
+                });
+
+                it("performs jQuery's slideUp animation", function() {
+                    expect(animated).toBe(true);
+                });
+            });
+
+            describe("by clicking one of the remove form parameter buttons", function() {
+                beforeEach(function() {
+                    expect($(".post_body_pair").length).toEqual(4);
+
+                    var row_to_delete = $(".post_body_pair").eq(2);
+                    row_to_delete.find(".key").val('sunshine');
+                    row_to_delete.find(".value").val('rainbows');
+
+                    row_to_delete.find(".delete_body_param").click();
+                });
+
+                it("removes the parameter", function() {
+                    expect($(".post_body_pair").length).toEqual(3);
+                    expect(wurl.url()).not.toContain('sunshine');
+                    expect(wurl.url()).not.toContain('rainbows');
+                });
+
+                it("performs jQuery's slideUp animation", function() {
+                    expect(animated).toBe(true);
+                });
             });
         });
 

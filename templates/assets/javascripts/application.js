@@ -66,6 +66,13 @@ function Wurl(wurlForm) {
       self.addInputs("post_body");
   });
 
+  $('.trash_form_parameters', this.$wurlForm).click(function() {
+      var $newFormBodyPairs = $(".post_body_pair .delete_body_param").parent();
+      $newFormBodyPairs.slideUp(function() {
+          $newFormBodyPairs.remove();
+      });
+  });
+
   $('.add_param', this.$wurlForm).click(function () {
     self.addInputs('param');
   });

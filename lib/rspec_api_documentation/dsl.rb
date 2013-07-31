@@ -14,4 +14,8 @@ end
 RSpec.configuration.include RspecApiDocumentation::DSL::Resource, :api_doc_dsl => :resource
 RSpec.configuration.include RspecApiDocumentation::DSL::Endpoint, :api_doc_dsl => :endpoint
 RSpec.configuration.include RspecApiDocumentation::DSL::Callback, :api_doc_dsl => :callback
-RSpec.configuration.backtrace_clean_patterns << %r{lib/rspec_api_documentation/dsl\.rb}
+if RSpec.configuration.respond_to?(:backtrace_exclusion_patterns)
+  RSpec.configuration.backtrace_exclusion_patterns << %r{lib/rspec_api_documentation/dsl\.rb}
+else
+  RSpec.configuration.backtrace_clean_patterns << %r{lib/rspec_api_documentation/dsl\.rb}
+end
